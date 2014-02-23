@@ -1,14 +1,11 @@
 #library "Score"
 #include "zcommon.acs"
 
+#define DEATH_PENALTY 100
+
 #define MAX_PLAYERS 8
 int score[MAX_PLAYERS] = {0, 0, 0, 0, 0, 0, 0, 0};
-
-script 1 OPEN
-{
-  GiveInventory("PlasmaRifle", 1);
-  GiveInventory("Cell", 200);
-}
+int sorted[MAX_PLAYERS] = {0,1,2,3,4,5,6,7};
 
 script 4 ENTER
 {
@@ -27,16 +24,54 @@ script 4 ENTER
   {
     if (i == best)
     {
-      HudMessage(n:i, s:": ", i:score[i]; HUDMSG_PLAIN, 103 + i, CR_GOLD, 5.1, y, 0);
+      HudMessage(i:(i+1), s:" ", n:i, s:": ", i:score[i]; HUDMSG_PLAIN, 103 + i, CR_GOLD, 5.1, y, 0);
     }
     else
     {
-      HudMessage(n:i, s:": ", i:score[i]; HUDMSG_PLAIN, 103 + i, CR_GREEN, 5.1, y, 0);
+      HudMessage(i:(i+1), s:" ", n:i, s:": ", i:score[i]; HUDMSG_PLAIN, 103 + i, CR_GREEN, 5.1, y, 0);
     }
     y += 16.0;
   }
   Delay(5);
   Restart;
+}
+
+script 5 DEATH
+{
+  score[PlayerNumber()] -= DEATH_PENALTY;
+}
+
+script 6 UNLOADING
+{
+  for (int k = 0; k < PlayerCount(); k++)
+  {
+    sorted[k] = k;
+  }
+  
+  // good old bubble sort
+  for (int i = 0; i < PlayerCount() - 1; i++)
+  {
+    bool change = false;
+    for (int j = 0; j < PlayerCount() - 1; j++)
+    {
+      if (score[sorted[j]] < score[sorted[j+1]])
+      {
+        int x = sorted[j];
+        sorted[j] = sorted[j+1];
+        sorted[j+1] = x;
+        change = true;
+      }
+    }
+    if (!change) break;
+  }
+  
+  PrintBold(s:"Final scores");
+  for (int l = 0; l < PlayerCount(); l++)
+  {
+    // at this point, players are no longer in the game, so we can't
+    // print their real names. So we just print "player" and a number
+    PrintBold(i:(l+1), s:". player ", i:(sorted[l] + 1), s:": ", i:score[sorted[l]]);
+  }
 }
 
 function int GetBestPlayerNumber(void)
