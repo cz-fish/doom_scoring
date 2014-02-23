@@ -1,3 +1,4 @@
+#library "Score"
 #include "zcommon.acs"
 
 #define MAX_PLAYERS 8
