@@ -1,0 +1,6 @@
+const int KillZombieman = 5;
+const int SplatterKillZombieman = 10;
+const int KillImp = 10;
+const int SplatterKillImp = 20;
+const int KillChainguy = 20;
+const int SplatterKillChainguy = 40;
