@@ -1,0 +1,42 @@
+#include "zcommon.acs"
+
+#define MAX_PLAYERS 4
+int score[MAX_PLAYERS] = {0, 0, 0, 0};
+int xscore = 0;
+
+script 1 OPEN
+{
+  GiveInventory("PlasmaRifle", 1);
+  GiveInventory("Cell", 200);
+  //SetWeapon("PlasmaRifle");
+}
+
+script 2 (int points)
+{
+  PrintBold(s:"Monster killed by ", i:ActivatorTID(), s:"\nPlayer number ", i:PlayerNumber());
+  xscore += points;
+  if (ActivatorTID() >= 1000 && ActivatorTID() <= 1000 + MAX_PLAYERS)
+  {
+    score[PlayerNumber()] += points;
+  }
+}
+
+/*script 3 (void)
+{
+  score += 10;
+} */
+
+script 4 ENTER
+{
+  if (!ActivatorTID())
+  {
+    Thing_ChangeTID(0, 1000 + PlayerNumber());
+    Print(s:"You got TID ", i:(1000 + PlayerNumber()));
+  }
+  SetHudSize(800, 600, TRUE);
+  HudMessage(s:"score:"; HUDMSG_PLAIN, 102, CR_GREEN, 5.1, 5.1, 0);
+//  HudMessage(i:score[PlayerNumber()]; HUDMSG_PLAIN, 103, CR_GREEN, 60.1, 5.1, 0);
+  HudMessage(i:xscore; HUDMSG_PLAIN, 103, CR_GREEN, 60.1, 5.1, 0);
+  Delay(5);
+  Restart;
+}

@@ -1,0 +1,69 @@
+ACTOR ValuedZombieMan: ZombieMan replaces ZombieMan
+{
+  States
+  {
+    Death:
+      POSS H 0 ACS_ExecuteAlways(2, 0, 5)
+	  POSS H 5
+      POSS I 5 A_Scream
+      POSS J 5 A_NoBlocking
+      POSS K 5
+      POSS L -1
+      stop
+  XDeath:
+    POSS M 0 ACS_ExecuteAlways(2, 0, 12)
+    POSS M 5
+    POSS N 5 A_XScream
+    POSS O 5 A_NoBlocking
+    POSS PQRST 5
+    POSS U -1
+    Stop
+  }
+}
+
+ACTOR ValuedImp: DoomImp replaces DoomImp
+{
+  States
+  {
+    Death:
+    TROO I 0 ACS_ExecuteAlways(2, 0, 10)
+    TROO I 8
+    TROO J 8 A_Scream
+    TROO K 6
+    TROO L 6 A_NoBlocking
+    TROO M -1
+    Stop
+	XDeath:
+    TROO N 0 ACS_ExecuteAlways(2, 0, 20)
+    TROO N 5
+    TROO O 5 A_XScream
+    TROO P 5
+    TROO Q 5 A_NoBlocking
+    TROO RST 5
+    TROO U -1
+    Stop
+  }
+}
+
+ACTOR ValuedChaingunGuy: ChaingunGuy replaces ChaingunGuy
+{
+  States
+  {
+  Death:
+    CPOS H 0 ACS_ExecuteAlways(2, 0, 20)
+    CPOS H 5
+    CPOS I 5 A_Scream
+    CPOS J 5 A_NoBlocking
+    CPOS KLM 5
+    CPOS N -1
+    Stop
+  XDeath:
+    CPOS O 0 ACS_ExecuteAlways(2, 0, 50)
+    CPOS O 5 
+    CPOS P 5 A_XScream
+    CPOS Q 5 A_NoBlocking
+    CPOS RS 5
+    CPOS T -1
+    Stop
+  }
+}
