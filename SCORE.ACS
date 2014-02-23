@@ -16,11 +16,10 @@ script 4 ENTER
     TakeInventory("Points", addPoints);
   }
 
-  SetHudSize(800, 600, TRUE);
-  HudMessage(s:"Points:"; HUDMSG_PLAIN, 102, CR_WHITE, 5.1, 5.1, 0);
-  int y = 25.1;
+  SetHudSize(800, 600, FALSE);
+  int y = 595.2;
   int best = GetBestPlayerNumber();
-  for (int i = 0; i < PlayerCount(); i++)
+  for (int i = PlayerCount() - 1; i >= 0; i--)
   {
     if (i == best)
     {
@@ -30,8 +29,10 @@ script 4 ENTER
     {
       HudMessage(i:(i+1), s:" ", n:i, s:": ", i:score[i]; HUDMSG_PLAIN, 103 + i, CR_GREEN, 5.1, y, 0);
     }
-    y += 16.0;
+    y -= 16.0;
   }
+  y -= 3.0;
+  HudMessage(s:"Points:"; HUDMSG_PLAIN, 102, CR_WHITE, 5.1, y, 0);
   Delay(5);
   Restart;
 }
@@ -65,12 +66,12 @@ script 6 UNLOADING
     if (!change) break;
   }
   
-  PrintBold(s:"Final scores");
+  Print(s:"Final scores");
   for (int l = 0; l < PlayerCount(); l++)
   {
     // at this point, players are no longer in the game, so we can't
     // print their real names. So we just print "player" and a number
-    PrintBold(i:(l+1), s:". player ", i:(sorted[l] + 1), s:": ", i:score[sorted[l]]);
+    Print(i:(l+1), s:". player ", i:(sorted[l] + 1), s:": ", i:score[sorted[l]]);
   }
 }
 
