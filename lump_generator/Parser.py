@@ -7,7 +7,7 @@
 import re
 
 includePattern = re.compile(r'^#include\W+([^ \t]+)', flags=re.IGNORECASE)
-actorPattern = re.compile(r'^actor\W+([^: \t]+)\W*(?::\W*(\w+)\W*(?:replaces\W*(\w+))?)?', flags=re.IGNORECASE)
+actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+)\W*(?:replaces\W*(\w+))?)?', flags=re.IGNORECASE)
 statesPattern = re.compile(r'^states', flags=re.IGNORECASE)
 stateLabelPattern = re.compile(r'^([^: \t]+):')
 
@@ -79,7 +79,7 @@ class Parser:
                 if m:
                     if braceLevel == statesBraceLevel:
                         self._stateHeader(m)
-                elif braceLevel == statesBraceLevel:
+                elif braceLevel == statesBraceLevel and hunk != '':
                     self._stateAction(hunk)
 
                 braceLevel += increment
