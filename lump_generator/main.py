@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
+import sys
+import getopt
+import os
 from Parser import Parser, Actor, State
 from ActorFilter import ActorFilter
 from RewardGenerator import RewardGenerator
 from DecorateGenerator import DecorateGenerator
-import sys
 
 class FileReader:
+    def __init__(self, path):
+        self.path = path
+
     def readLump(self, fileName):
-        with open(fileName, 'rt') as f:
+        with open(os.path.join(self.path, fileName), 'rt') as f:
             return [l for l in f.readlines()]
 
 def dump(actors):
@@ -20,8 +25,26 @@ def dump(actors):
                 #for l in s.Lines:
                 #    print("    " + l, file=f)
 
+def PrintHelp():
+    print("""Options:
+  -h                this help
+  -i <path>         input directory (default .)
+  -o <path>         output directory (default ./output)""")
+
 def main():
-    fileReader = FileReader()
+    inputDir = '.'
+    outputDir = './output'
+    opts, args = getopt.getopt(sys.argv[1:], "hi:o:")
+    for o, a in opts:
+        if o == '-h':
+            PrintHelp()
+            sys.exit()
+        elif o == '-i':
+            inputDir = a
+        elif o == '-o':
+            outputDir = a
+
+    fileReader = FileReader(inputDir)
     parser = Parser(fileReader, "DECORATE")
     try:
         dec = parser.parse()
@@ -46,10 +69,12 @@ def main():
     for actor in statesToReward:
         for state in actor.States:
             reward.addPointReward(actor, state)
+    pointConstants = reward.Constants
+    rewardItems = reward.Items
 
-    # TODO: write the modified scoredStates in DECORATE format
-    decorateGenerator = DecorateGenerator("output")
-    decorateGenerator.saveDecorate(statesToReward)
+    # write the modified scoredStates in DECORATE format
+    decorateGenerator = DecorateGenerator(outputDir)
+    decorateGenerator.saveDecorate(statesToReward, pointConstants, rewardItems)
 
 if __name__ == '__main__':
     main()
