@@ -16,7 +16,7 @@ class ActorFilter:
     _interestingStates = ['Death', 'XDeath']
 
     def _filterSingleActor(self, actor):
-        if not actor.Monster:
+        if not actor.Shootable:
             return []
 
         selectedStates = []

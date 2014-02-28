@@ -8,7 +8,7 @@ import re
 
 includePattern = re.compile(r'^#include\W+([^ \t]+)', flags=re.IGNORECASE)
 actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+)\W*(?:replaces\W*(\w+))?)?', flags=re.IGNORECASE)
-monsterPattern = re.compile(r'^monster', flags=re.IGNORECASE)
+shootablePattern = re.compile(r'(?:\bmonster\b)|(?:\+ISMONSTER\b)|(?:\+SHOOTABLE\b)', flags=re.IGNORECASE)
 statesPattern = re.compile(r'^states', flags=re.IGNORECASE)
 stateLabelPattern = re.compile(r'^([^: \t]+):')
 
@@ -26,7 +26,7 @@ class Actor:
         self.ActorName = actorName
         self.ParentName = parentName
         self.Replaces = replaces
-        self.Monster = False
+        self.Shootable = False
         self.States = []
 
 
@@ -71,10 +71,10 @@ class Parser:
                     actorBraceLevel = braceLevel + 1
 
                 # Monster
-                m = monsterPattern.match(hunk)
+                m = shootablePattern.search(hunk)
                 if m:
                     if braceLevel == actorBraceLevel:
-                        self.actors[-1].Monster = True
+                        self.actors[-1].Shootable = True
 
                 # States
                 m = statesPattern.match(hunk)

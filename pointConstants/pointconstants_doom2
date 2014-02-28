@@ -1,12 +1,15 @@
 const int pointsArachnotronDeath = 150;
 const int pointsArchvileDeath = 250;
+const int pointsBossBrainDeath = 2000;
 const int pointsBaronOfHellDeath = 200;
 const int pointsCacodemonDeath = 80;
 const int pointsCyberdemonDeath = 600;
 const int pointsDemonDeath = 25;
 const int pointsDoomImpDeath = 12;
 const int pointsDoomImpSplatterDeath = 30;
+const int pointsExplosiveBarrelDeath = 3;
 const int pointsFatsoDeath = 150;
+const int pointsCommanderKeenDeath = 42;
 const int pointsLostSoulDeath = 20;
 const int pointsPainElementalDeath = 100;
 const int pointsZombieManDeath = 5;
