@@ -1,4 +1,4 @@
-from Parser import Actor, State
+from Actor import Actor, State
 
 class ActorFilter:
     def findStatesToReward(self, allActors):
@@ -7,7 +7,8 @@ class ActorFilter:
             filteredStates = self._filterSingleActor(actor)
             if filteredStates:
                 selectedActors += [Actor(actor.ActorName, actor.ParentName, actor.Replaces)]
-                selectedActors[-1].States = filteredStates
+                for s in filteredStates:
+                    selectedActors[-1].AddState(s)
 
         # TODO: handle possible duplicates in the selectedActors list
 
@@ -16,11 +17,11 @@ class ActorFilter:
     _interestingStates = ['Death', 'XDeath']
 
     def _filterSingleActor(self, actor):
-        if not actor.Shootable:
+        if not actor.IsShootable():
             return []
 
         selectedStates = []
-        for s in actor.States:
+        for s in actor.GetStates():
             if s.Name in self._interestingStates:
                 selectedStates += [s]
         return selectedStates

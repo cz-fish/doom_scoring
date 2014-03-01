@@ -1,6 +1,6 @@
 import os
 import os.path
-from Parser import Actor, State
+from Actor import Actor, State
 
 # name of the file included from DECORATE that contains constants for point scores
 constantsFile = "pointconstants"
@@ -27,7 +27,7 @@ class DecorateGenerator:
                 print("{", file=f)
                 print("    States", file = f)
                 print("    {", file = f)
-                for s in a.States:
+                for s in a.GetStates():
                     print("    {}:".format(s.Name), file = f)
                     for l in s.Lines:
                         print("        " + l, file = f)

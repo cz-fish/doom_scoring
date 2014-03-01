@@ -3,7 +3,8 @@
 import sys
 import getopt
 import os
-from Parser import Parser, Actor, State
+from Actor import State, Actor
+from Parser import Parser
 from ActorFilter import ActorFilter
 from RewardGenerator import RewardGenerator
 from DecorateGenerator import DecorateGenerator
@@ -16,12 +17,12 @@ class FileReader:
         with open(os.path.join(self.path, fileName), 'rt') as f:
             return [l for l in f.readlines()]
 
-def dump(actors):
-    with open('all_actors.txt', 'wt') as f:
+def dump(path, actors):
+    with open(os.path.join(path, 'all_actors.txt'), 'wt') as f:
         for a in actors:
-            print("{}: {} replaces {}".format(a.ActorName, a.ParentName, a.Replaces), file=f)
-            for s in a.States:
-                print("  '{}': {} lines".format(s.Name, len(s.Lines)), file=f)
+            print(str(a), file=f)
+            for s in a.GetStates():
+                print("  " + str(s), file=f)
                 #for l in s.Lines:
                 #    print("    " + l, file=f)
 
@@ -53,28 +54,29 @@ def main():
         for trace in parser.getTraceback():
             print("  in {} on line {}".format(trace[0], trace[1]))
         sys.exit(1)
+    parser.resolveParentLinks()
 
     ##
-    #dump(parser.actors)
+    #dump(outputDir, parser.actors)
     ##
 
     aFilter = ActorFilter()
-    statesToReward = aFilter.findStatesToReward(parser.actors)
+    actorsForReward = aFilter.findStatesToReward(parser.actors)
 
     ##
-    #dump(scoredStates)
+    #dump(outputDir, actorsForReward)
     ##
 
     reward = RewardGenerator()
-    for actor in statesToReward:
-        for state in actor.States:
+    for actor in actorsForReward:
+        for state in actor.GetStates():
             reward.addPointReward(actor, state)
     pointConstants = reward.Constants
     rewardItems = reward.Items
 
     # write the modified scoredStates in DECORATE format
     decorateGenerator = DecorateGenerator(outputDir)
-    decorateGenerator.saveDecorate(statesToReward, pointConstants, rewardItems)
+    decorateGenerator.saveDecorate(actorsForReward, pointConstants, rewardItems)
 
 if __name__ == '__main__':
     main()

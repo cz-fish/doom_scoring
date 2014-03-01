@@ -1,4 +1,4 @@
-from Parser import Actor, State
+from Actor import Actor, State
 
 pointsItem = "Points"
 

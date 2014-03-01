@@ -5,6 +5,7 @@
 # fragile.
 
 import re
+from Actor import State, Actor
 
 includePattern = re.compile(r'^#include\W+([^ \t]+)', flags=re.IGNORECASE)
 actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+)\W*(?:replaces\W*(\w+))?)?', flags=re.IGNORECASE)
@@ -16,20 +17,6 @@ class ParserException(Exception):
     pass
 
 
-class State:
-    def __init__(self, stateName):
-        self.Name = stateName
-        self.Lines = []
-
-class Actor:
-    def __init__(self, actorName, parentName, replaces):
-        self.ActorName = actorName
-        self.ParentName = parentName
-        self.Replaces = replaces
-        self.Shootable = False
-        self.States = []
-
-
 class Parser:
     def __init__(self, fileReader, rootFile):
         self.fileReader = fileReader
@@ -37,6 +24,7 @@ class Parser:
         self.fileStack = [rootFile]
         self.filePos = [0]
         self.actors = []
+        self.actorMap = {}
 
     def parse(self):
         insideComment = False
@@ -74,7 +62,7 @@ class Parser:
                 m = shootablePattern.search(hunk)
                 if m:
                     if braceLevel == actorBraceLevel:
-                        self.actors[-1].Shootable = True
+                        self.actors[-1].SetShootable()
 
                 # States
                 m = statesPattern.match(hunk)
@@ -109,6 +97,9 @@ class Parser:
     def getTraceback(self):
         return [tb for tb in zip(self.fileStack, self.filePos)]
 
+    def resolveParentLinks(self):
+        for actor in self.actors:
+            actor.LinkToParent(self.actorMap)
 
     def _include(self, match):
         fileName = match.group(1)
@@ -121,16 +112,18 @@ class Parser:
         actorName = match.group(1)
         parentName = match.group(2)
         replaces = match.group(3)
-        self.actors += [Actor(actorName, parentName, replaces)]
+        newActor = Actor(actorName, parentName, replaces)
+        self.actors += [newActor]
+        self.actorMap[actorName] = newActor
 
     def _stateHeader(self, match):
         stateName = match.group(1)
-        self.actors[-1].States += [State(stateName)]
+        self.actors[-1].AddState(State(stateName))
 
     def _stateAction(self, line):
-        if not self.actors[-1].States:
-            self.actors[-1].States += [State("")]
-        self.actors[-1].States[-1].Lines += [line]
+        if not self.actors[-1].HasOwnStates():
+            self.actors[-1].AddState(State(""))
+        self.actors[-1].GetLastState().Lines += [line]
 
 
     def _stripComments(self, line, insideComment):
