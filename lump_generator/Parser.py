@@ -12,6 +12,7 @@ actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+)\W*(?:replaces\W*(
 shootablePattern = re.compile(r'(?:\bmonster\b)|(?:\+ISMONSTER\b)|(?:\+SHOOTABLE\b)', flags=re.IGNORECASE)
 statesPattern = re.compile(r'^states', flags=re.IGNORECASE)
 stateLabelPattern = re.compile(r'^([^: \t]+):')
+skipSuperPattern = re.compile(r'\bSKIP_SUPER\b', flags=re.IGNORECASE)
 
 class ParserException(Exception):
     pass
@@ -63,6 +64,11 @@ class Parser:
                 if m:
                     if braceLevel == actorBraceLevel:
                         self.actors[-1].SetShootable()
+
+                m = skipSuperPattern.search(hunk)
+                if m:
+                    if braceLevel == actorBraceLevel:
+                        self.actors[-1].SetSkipSuper()
 
                 # States
                 m = statesPattern.match(hunk)
