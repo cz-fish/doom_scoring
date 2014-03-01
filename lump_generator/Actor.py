@@ -1,3 +1,7 @@
+import re
+
+superSearchPattern = re.compile(r'\bSuper::', flags=re.IGNORECASE)
+
 class State:
     def __init__(self, stateName, lines = None):
         self.Name = stateName
@@ -5,6 +9,12 @@ class State:
             self.Lines = lines
         else:
             self.Lines = []
+
+    def ReplaceSuper(self, substitute):
+        """Replaces Super:: with <substitute>:: in all lines"""
+        repl = substitute + "::"
+        for i in range(len(self.Lines)):
+            self.Lines[i] = superSearchPattern.sub(repl, self.Lines[i])
 
     def __str__(self):
         return "<State {}: {} lines>".format(self.Name, len(self.Lines))
@@ -71,6 +81,23 @@ class Actor:
         instance will use it to look up its parent by the name."""
         if self.ParentName and self.ParentName in actorMap:
             self._Parent = actorMap[self.ParentName]
+
+    def FixReferencesToSuper(self):
+        """Replaces Super:: with grandparent's name in state actions
+
+        Each actor may call it's parent's state by using the Super::<state> syntax.
+        We will be deriving a new actor from the current one and taking over its state
+        definitions. If the current actor references its own parent by Super::, the newly
+        derived actor would on the othet hand reference the current actor with Super::,
+        but what we'd need instead in the derived actor is the parent's parent (something
+        like Super::Super::). It can be shortened by using the <GrandparentName>:: syntax.
+        
+        This method replaces all Super:: references in the actor's states with name of
+        this actor's parent."""
+        if not self.ParentName:
+            return
+        for s in self._States:
+            s.ReplaceSuper(self.ParentName)
 
     def __str__(self):
         return "<Actor {}({}) replaces {}, {}shootable>".format(
