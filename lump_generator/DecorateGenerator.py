@@ -51,8 +51,10 @@ class DecorateGenerator:
                 print("}", file = f)
 
     def _saveConstants(self, constants):
+        sortedConst = [c for c in constants]
+        sortedConst.sort()
         with open(os.path.join(self.path, constantsFile), 'wt') as f:
-            for const in constants:
+            for const in sortedConst:
                 print("const int {} = 0;".format(const), file = f)
 
     def _saveMasterFile(self, includes):

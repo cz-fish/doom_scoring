@@ -5,7 +5,6 @@ import getopt
 import os
 from Actor import State, Actor
 from Parser import Parser
-from ActorFilter import ActorFilter
 from RewardGenerator import RewardGenerator
 from DecorateGenerator import DecorateGenerator
 
@@ -20,11 +19,13 @@ class FileReader:
 def dump(path, actors):
     with open(os.path.join(path, 'all_actors.txt'), 'wt') as f:
         for a in actors:
+            if not a.IsShootable():
+                continue
             print(str(a), file=f)
             for s in a.GetStates():
                 print("  " + str(s), file=f)
-                #for l in s.Lines:
-                #    print("    " + l, file=f)
+                for l in s.Lines:
+                    print("    " + l, file=f)
 
 def PrintHelp():
     print("""Options:
@@ -60,23 +61,14 @@ def main():
     #dump(outputDir, parser.actors)
     ##
 
-    aFilter = ActorFilter()
-    actorsForReward = aFilter.findStatesToReward(parser.actors)
-
-    ##
-    #dump(outputDir, actorsForReward)
-    ##
-
     reward = RewardGenerator()
-    for actor in actorsForReward:
-        for state in actor.GetStates():
-            reward.addPointReward(actor, state)
+    actorsWithReward = reward.valueActors(parser.actors)
     pointConstants = reward.Constants
     rewardItems = reward.Items
 
     # write the modified scoredStates in DECORATE format
     decorateGenerator = DecorateGenerator(outputDir)
-    decorateGenerator.saveDecorate(actorsForReward, pointConstants, rewardItems)
+    decorateGenerator.saveDecorate(actorsWithReward, pointConstants, rewardItems)
 
 if __name__ == '__main__':
     main()
