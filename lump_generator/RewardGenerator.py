@@ -7,8 +7,63 @@ class RewardGenerator:
         self.Constants = set()
         self.Items = [PointsItem]
 
-    _ignoreStates = set()
-    _ignoreActors = set()
+    _ignoreStates = {
+         'death.avoid',
+         'death.killme',
+         'death.taunt',
+         'death.tear',
+         'death.throwable',
+         'death2',
+         'death.shotgun',
+         'death.shotgunontheface',
+         'deathjump',
+         'deathmirror',
+         'deathnoguts',
+         'deathremovearm',
+         'death.cutless',
+         'pain.avoid',
+         'pain.killme',
+         'pain.taunt',
+         'painak2',
+         'xdeathrare'}
+
+    _doomActors = {
+            'arachnotron',
+            'archvile',
+            'baronofhell',
+            'bossbrain',
+            'cacodemon',
+            'chaingunguy',
+            'commanderkeen',
+            'cyberdemon',
+            'demon',
+            'doomimp',
+            'explosivebarrel',
+            'fatso',
+            'hellknight',
+            'lostsoul',
+            'marinebfg',
+            'marineberserk',
+            'marinechaingun',
+            'marinechainsaw',
+            'marinefist',
+            'marinepistol',
+            'marineplasma',
+            'marinerailgun',
+            'marinerocket',
+            'marinessg',
+            'marineshotgun',
+            'painelemental',
+            'revenant',
+            'scriptedmarine',
+            'shotgunguy',
+            'spectre',
+            'spidermastermind',
+            'wolfensteinss',
+            'zombieman'
+            }
+
+    _extraActors = set()
 
     def valueActors(self, allActors):
         selectedActors = []
@@ -22,11 +77,19 @@ class RewardGenerator:
         return selectedActors
 
     def _filterSingleActor(self, actor):
-        if not actor.IsShootable():
+        # BrutalDoom introduces great many new shootable actors. We want to add
+        # points only to those that represent the original Doom monsters (plus any
+        # defined extraActors that we might be interested in)
+        if not actor.ActorName.lower() in self._doomActors \
+           and (not actor.ActorName.lower() in self._extraActors) \
+           and (not actor.Replaces \
+                or actor.Replaces.lower() not in self._doomActors):
             return None
 
-        if actor.ActorName in self._ignoreActors:
-            return None
+        if actor.Replaces:
+            constName = actor.Replaces
+        else:
+            constName = actor.ActorName
 
         selectedStates = []
         for s in actor.GetStates():
@@ -35,11 +98,11 @@ class RewardGenerator:
                 continue
 
             if lowerName.startswith('death.fatality'):
-                self._addPointReward(s, self._generateConstName(actor.ActorName, "Fatality"))
+                self._addPointReward(s, self._generateConstName(constName, "Fatality"))
             elif lowerName.startswith('death'):
-                self._addPointReward(s, self._generateConstName(actor.ActorName, "Death"))
+                self._addPointReward(s, self._generateConstName(constName, "Death"))
             elif lowerName.startswith('xdeath'):
-                self._addPointReward(s, self._generateConstName(actor.ActorName, "SplatterDeath"))
+                self._addPointReward(s, self._generateConstName(constName, "SplatterDeath"))
             elif lowerName.startswith('pain'):
                 self._addPointReward(s, self._generateConstName('', "Pain"))
             else:
