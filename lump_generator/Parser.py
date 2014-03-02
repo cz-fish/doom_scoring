@@ -8,7 +8,7 @@ import re
 from Actor import State, Actor
 
 includePattern = re.compile(r'^#include\W+([^ \t]+)', flags=re.IGNORECASE)
-actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+)\W*(?:replaces\W*(\w+))?)?', flags=re.IGNORECASE)
+actorPattern = re.compile(r'^actor\W+([^: \t]+)(?:\W*:\W*(\w+))?\W*(?:replaces\W*(\w+))?', flags=re.IGNORECASE)
 shootablePattern = re.compile(r'(?:\bmonster\b)|(?:\+ISMONSTER\b)|(?:\+SHOOTABLE\b)', flags=re.IGNORECASE)
 statesPattern = re.compile(r'^states', flags=re.IGNORECASE)
 stateLabelPattern = re.compile(r'^([^: \t]+):')
