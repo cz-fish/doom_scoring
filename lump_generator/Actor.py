@@ -104,7 +104,7 @@ class Actor:
                 self.ActorName,
                 self.ParentName,
                 self.Replaces,
-                ['not',''][self.IsShootable()])
+                ['not ',''][self.IsShootable()])
 
     def __repr__(self):
         return str(self)

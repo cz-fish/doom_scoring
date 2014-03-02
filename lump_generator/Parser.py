@@ -106,7 +106,9 @@ class Parser:
     def resolveParentLinks(self):
         for actor in self.actors:
             actor.LinkToParent(self.actorMap)
-            actor.FixReferencesToSuper()
+            # It is no longer necessary to replace Super:: references because
+            # we won't be using the state lines anyway
+            #actor.FixReferencesToSuper()
 
     def _include(self, match):
         fileName = match.group(1)

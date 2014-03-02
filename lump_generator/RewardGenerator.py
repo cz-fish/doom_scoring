@@ -10,7 +10,8 @@ class RewardGenerator:
     def addPointReward(self, actor, state):
         constantName = self._generateConstName(actor.ActorName, state.Name)
         self.Constants += [constantName]
-        state.Lines = ["""TNT1 A 0 A_GiveToTarget("{}", {})""".format(pointsItem, constantName)] + state.Lines
+        state.Lines = ["""TNT1 A 0 A_GiveToTarget("{}", {})""".format(pointsItem, constantName),
+                       """goto Super::{}""".format(state.Name)]
 
     def _generateConstName(self, actorName, stateName):
         if stateName == 'XDeath':
