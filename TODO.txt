@@ -1,7 +1,0 @@
-* parse +ISMONSTER attribute (keen), unite with Monster attribute
-* parse +SHOOTABLE attribute (barrel, bossbrain, keen) - add to monster list
-* reward points for Pain action - hurting monsters
-* reward points for mass kills = many kills in short time period - the ACS script can count ticks between point awards and multiply these awards accordingly
-* inspect all possible death actions from BrutalDoom
-* reward points for picked up items and found secrets - TBD how to intercept activation of these events
-
